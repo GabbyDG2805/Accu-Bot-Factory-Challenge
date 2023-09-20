@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use App\Models\Order;
 
 class ImportOrders extends Command
 {
@@ -49,17 +51,19 @@ class ImportOrders extends Command
 
         $headers = array_shift($csvData);
 
-            foreach($csvData as $value){
-                $value = array_combine($headers, $value);
-                DB::table('orders')->insert([
-                    'order_id' => $value['Order ID'],
-                    'customer_name' => $value['Customer Name'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+            foreach($csvData as $data){
+                $data = array_combine($headers, $data);
+
+                Order::updateOrInsert(
+                    ['id' => $data['Order ID']],
+                    [
+                        'customer_name' => $data['Customer Name'],
+                        'updated_at' => Carbon::now()
+                    ]
+                );
             }
 
-            //need to revise database desgin and make it so that it handles duplicates/existing entries
+        //need to make more efficient by cleansing array of duplicates first and to upload other info to other tables.
 
         $this->info('Order data imported successfully.');
     }

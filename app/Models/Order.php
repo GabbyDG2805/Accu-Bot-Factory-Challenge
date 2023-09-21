@@ -32,4 +32,26 @@ class Order extends Model
             return $component->weight * $component->pivot->quantity;
         });
     }
+
+    //Calculate the most prevalent category of components within an order
+    public function calculateMostPrevalentCategory($order)
+    {
+        // Get the components associated with the order
+        $components = $order->components;
+
+        $categoryCounts = [];
+
+        // Iterate through the components and count occurrences of each category
+        foreach ($components as $component) {
+            $category = $component->category;
+
+            // Increment the count for this category or initialize it to 1 if it doesn't exist
+            $categoryCounts[$category] = ($categoryCounts[$category] ?? 0) + 1;
+        }
+
+        // Find the category with the highest count
+        $mostPrevalentCategory = array_search(max($categoryCounts), $categoryCounts);
+
+        return $mostPrevalentCategory;
+    }
 }

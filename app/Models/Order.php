@@ -54,4 +54,35 @@ class Order extends Model
 
         return $mostPrevalentCategory;
     }
+
+    public function generateRobotName($order)
+    {
+        // Get the most prevalent category
+        $mostPrevalentCategory = $this->calculateMostPrevalentCategory($order);
+
+        // Define category-specific words
+        $categoryPrefixes = [
+            'Cutting Tools' => ['Cut', 'Blade', 'Sharp', 'Cutter', 'Cutto'],
+            'Electronics' => ['Electro', 'Circuit', 'Wired', 'Diode', 'Fuse'],
+            'Fasteners' => ['Bolt', 'Screw', 'Nut', 'Clip', 'Fasten'],
+            'Materials' => ['Matter', 'Substance', 'Solid', 'Materio'],
+            'Mechanical Components' => ['Mechano', 'Mecha', 'Gear'],
+            'Pneumatics' => ['Pneuma', 'Pneumo', 'Air', 'Pressure'],
+            'Structural Support' => ['Structo', 'Builder', 'Support', 'Buildo']
+        ];
+
+        $suffixes = ['Tron', 'Bot', 'Prime', '-1000', 'Naut', 'Rover', 'Xplorer', 'Boy', 'Man', 'Chip', 'Amigo', 'Cybo', 'Droid', 'X', 'Tech', 'Tronics', 'Gizmo', 'Machina', 'Botix', 'Techtron'];
+
+        // Select words based on the most prevalent category
+        $prefixes = $categoryPrefixes[$mostPrevalentCategory] ?? ['Bot', 'Mech', 'Robo'];
+
+        // Randomly choose a category-specific prefix and a suffix
+        $prefix = $prefixes[array_rand($prefixes)];
+        $suffix = $suffixes[array_rand($suffixes)];
+
+        // Combine the words to create the robot name
+        $robotName = ucfirst($prefix) . ucfirst($suffix);
+
+        return $robotName;
+    }
 }

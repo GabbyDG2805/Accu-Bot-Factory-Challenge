@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Component;
 use App\Models\ComponentOrder;
+use App\ComponentApiService;
 
 class ImportOrders extends Command
 {
@@ -91,12 +92,26 @@ class ImportOrders extends Command
             // Advance the progress bar
             $progressBar->advance();
         }
-
         //This could be made more efficient but moving on due to consciousness of time.
 
-        // Complete and display the progress bar and a success message
-        $progressBar->finish();
-        $this->output->newLine();
-        $this->info('Order data imported successfully.');
+        // Create a new instance of the ComponentApiService class and fetch component data from the API using the service
+        $componentApiService = new ComponentApiService();
+        $products = $componentApiService->fetchComponentData();
+
+        // Check if component data was successfully retrieved from the API
+        if ($products !== false) {
+            // Store the fetched component data in the database using the service.
+            $componentApiService->storeComponentData($products);
+
+            // Complete and display the progress bar and a success message
+            $progressBar->finish();
+            $this->output->newLine();
+            $this->info('Order data imported successfully.');
+        } else {
+            // Display an error message in the case that API data retrieval was unsuccessful.
+            $this->output->newLine();
+            $this->error('Unable to get the components API data.');
+            return;
+        }
     }
 }

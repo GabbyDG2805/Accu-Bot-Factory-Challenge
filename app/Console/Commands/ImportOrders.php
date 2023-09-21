@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use App\Models\Order;
+use App\Models\Component;
+use App\Models\ComponentOrder;
 
 class ImportOrders extends Command
 {
@@ -29,17 +31,24 @@ class ImportOrders extends Command
      */
     public function handle()
     {
+        // Retrieve the file path argument provided when running the command
         $filePath = $this->argument('file');
 
+        // Check if the specified file exists in storage
         if (!Storage::exists($filePath)) {
             $this->error('The specified file does not exist.');
             return;
         }
 
+        // Initialize an array to store CSV data
         $csvData = [];
+
+        // Open and read the CSV file
         $handle = fopen(storage_path('app/' . $filePath), 'r');
 
+        // Check if the file was opened successfully
         if ($handle !== false) {
+            // Read each line of the CSV file and store it in the $csvData array
             while (($data = fgetcsv($handle)) !== false) {
                 $csvData[] = $data;
             }
@@ -49,22 +58,45 @@ class ImportOrders extends Command
             return;
         }
 
+        // Create and start a progress bar to display the import progress
+        $progressBar = $this->output->createProgressBar(count($csvData));
+        $progressBar->start();
+
+        // Extract headers (first row) from CSV data
         $headers = array_shift($csvData);
 
-            foreach($csvData as $data){
-                $data = array_combine($headers, $data);
+        foreach($csvData as $data){
+            // Combine headers with current data row to create an associative array
+            $data = array_combine($headers, $data);
 
-                Order::updateOrInsert(
-                    ['id' => $data['Order ID']],
-                    [
-                        'customer_name' => $data['Customer Name'],
-                        'updated_at' => Carbon::now()
-                    ]
-                );
-            }
+            // Find or create an order record based on 'Order ID'
+            $order = Order::firstOrCreate(
+                ['id' => $data['Order ID']],
+                [
+                    'customer_name' => $data['Customer Name']
+                ]
+            );
 
-        //need to make more efficient by cleansing array of duplicates first and to upload other info to other tables.
+            // Find or create a component record based on 'SKU'
+            $component = Component::firstOrCreate(
+                ['sku' => $data['SKU']]
+            );
 
+            // Find or create a componentOrder record based on 'order_id' and 'component_id'
+            ComponentOrder::firstOrCreate(
+                ['order_id' => $order->id, 'component_id' => $component->id],
+                ['quantity' => $data['Quantity']]
+            );
+
+            // Advance the progress bar
+            $progressBar->advance();
+        }
+
+        //This could be made more efficient but moving on due to consciousness of time.
+
+        // Complete and display the progress bar and a success message
+        $progressBar->finish();
+        $this->output->newLine();
         $this->info('Order data imported successfully.');
     }
 }

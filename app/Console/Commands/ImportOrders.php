@@ -66,7 +66,7 @@ class ImportOrders extends Command
         // Extract headers (first row) from CSV data
         $headers = array_shift($csvData);
 
-        foreach($csvData as $data){
+        foreach ($csvData as $data){
             // Combine headers with current data row to create an associative array
             $data = array_combine($headers, $data);
 
@@ -92,7 +92,7 @@ class ImportOrders extends Command
             // Advance the progress bar
             $progressBar->advance();
         }
-        //This could be made more efficient but moving on due to consciousness of time.
+        // This could be made more efficient but moving on due to consciousness of time.
 
         // Create a new instance of the ComponentApiService class and fetch component data from the API using the service
         $componentApiService = new ComponentApiService();
@@ -102,6 +102,21 @@ class ImportOrders extends Command
         if ($products !== false) {
             // Store the fetched component data in the database using the service.
             $componentApiService->storeComponentData($products);
+
+            // Loop through existing orders, check if the total weight & robot name has been calculated yet and if not, calculate them and save them to the database
+            foreach (Order::all() as $order) {
+                if (is_null($order->total_weight)) {
+                    $totalWeight = $order->calculateTotalWeight();
+                    $order->total_weight = $totalWeight;
+                    $order->save();
+                }
+
+                if (is_null($order->robot_name)) {
+                    $robotName = $order->generateRobotName($order);
+                    $order->robot_name = $robotName;
+                    $order->save();
+                }
+            }
 
             // Complete and display the progress bar and a success message
             $progressBar->finish();

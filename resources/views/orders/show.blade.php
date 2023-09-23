@@ -7,8 +7,12 @@
         <title>Bot Factory</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+        <link rel="dns-prefetch" href="//fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+
+        <!-- Scripts -->
+        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
     </head>
     <body>
         <h1>Order {{ $order->id }}</h1>
@@ -36,7 +40,6 @@
         </table>
 
         <h2>Components</h2>
-             @foreach ($order->components as $component)
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -49,17 +52,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>{{ $component->id }}</td>
-                            <td>{{ $component->sku }}</td>
-                            <td>{{ $component->description }}</td>
-                            <td>{{ $component->category }}</td>
-                            <td>{{ $component->weight }}</td>
-                            <td>{{ $component->pivot->quantity }}</td>
-                        </tr>
+                        @foreach ($order->components as $component)
+                            <tr>
+                                <td>{{ $component->id }}</td>
+                                <td>{{ $component->sku }}</td>
+                                <td>{{ $component->description }}</td>
+                                <td>{{ $component->category }}</td>
+                                <td>{{ $component->weight }}</td>
+                                <td>{{ $component->pivot->quantity }}</td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
-             @endforeach
     </div>
     </body>
 </html>

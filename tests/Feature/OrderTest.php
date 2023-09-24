@@ -191,6 +191,8 @@ class OrderTest extends TestCase
         $response->assertViewHas('orders', function ($orders) use ($oldOrder, $newOrder) {
             return $orders->contains($newOrder) && !$orders->contains($oldOrder);
         });
+
+        Order::destroy($newOrder->id);
     }
 
     protected function tearDown(): void

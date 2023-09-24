@@ -15,8 +15,8 @@ class CreateComponentOrdersTable extends Migration
             $table->integer('quantity');
             $table->timestamps();
 
-            $table->foreign('order_id')->references('id')->on('orders')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('component_id')->references('id')->on('components')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreign('component_id')->references('id')->on('components')->onDelete('cascade');
         });
     }
 

@@ -16,7 +16,7 @@
     </head>
     <body>
         <div class="container">
-            <h1>Order Details</h1>
+            <h1>Orders</h1>
 
             <form action="{{ route('orders.search') }}" method="GET">
                 @csrf

@@ -15,14 +15,14 @@
     </head>
     <body>
         <div class="container">
-            <h1>Edit Robot Name</h1>
+            <h1>Order {{ $order->id }}: {{ $order->robot_name }}</h1>
 
             <form method="POST" action="{{ route('orders.update', ['order' => $order->id]) }}">
                 @csrf
                 @method('PUT')
 
                 <div class="form-group">
-                    <label for="robot_name">New Robot Name:</label>
+                    <label for="robot_name">Edit Robot Name:</label>
                     <input type="text" name="robot_name" id="robot_name" class="form-control" value="{{ $order->robot_name }}">
                 </div>
                 <button type="submit" class="btn btn-primary">Update Robot Name</button>

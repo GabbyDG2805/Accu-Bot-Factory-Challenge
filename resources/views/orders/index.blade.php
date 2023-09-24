@@ -18,6 +18,14 @@
         <div class="container">
             <h1>Order Details</h1>
 
+            <form action="{{ route('orders.search') }}" method="GET">
+                @csrf
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="query" placeholder="Search orders">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </form>
+
             <table class="table table-bordered">
                 <thead>
                     <tr>

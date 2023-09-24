@@ -60,4 +60,28 @@ class OrderController extends Controller
         return redirect()->route('orders.show', ['order' => $order])
             ->with('success', 'Robot name updated successfully.');
     }
+
+    /**
+     * Search for orders based on the provided query.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        // Check if the query is a numeric value (potential ID match)
+        if (is_numeric($query)) {
+            // If it's a numeric value, search for an exact ID match
+            $orders = Order::where('id', $query)->get();
+        } else {
+            // If it's not numeric, perform a partial search on customer_name and robot_name
+            $orders = Order::where('customer_name', 'like', '%' . $query . '%')
+                ->orWhere('robot_name', 'like', '%' . $query . '%')
+                ->get();
+        }
+
+        return view('orders.index', compact('orders'));
+    }
 }

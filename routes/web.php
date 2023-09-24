@@ -14,9 +14,10 @@ use App\Http\Controllers\OrderController;
 |
 */
 
-Route::get('/', [OrderController::class, 'index'])->name('home');
+Route::get('/', [OrderController::class, 'index'])->name('orders.index');
 
 Route::prefix('orders')->group(function () {
+    Route::get('/search', [OrderController::class, 'search'])->name('orders.search');
      Route::prefix('{order}')->group(function () {
         Route::get('/details', [OrderController::class, 'show'])->name('orders.show');
         Route::get('/edit', [OrderController::class, 'edit'])->name('orders.edit');

@@ -25,8 +25,8 @@
                     <label for="robot_name">New Robot Name:</label>
                     <input type="text" name="robot_name" id="robot_name" class="form-control" value="{{ $order->robot_name }}">
                 </div>
-
                 <button type="submit" class="btn btn-primary">Update Robot Name</button>
+                <a href="{{ route('orders.show', ['order' => $order->id]) }}" class="btn btn-danger">Cancel</a>
             </form>
         </div>
     </body>

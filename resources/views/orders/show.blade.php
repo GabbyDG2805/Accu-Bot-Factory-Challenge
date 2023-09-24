@@ -16,6 +16,9 @@
     </head>
     <body>
         <h1>Order {{ $order->id }}</h1>
+
+        <a href="{{ route('orders.index') }}" class="btn btn-primary">Home</a>
+        
         <h2>Order Details</h2>
 
         <table class="table table-bordered">
@@ -40,30 +43,30 @@
         </table>
 
         <h2>Components</h2>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Component ID</th>
-                            <th>SKU</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Weight</th>
-                            <th>Quanitity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($order->components as $component)
-                            <tr>
-                                <td>{{ $component->id }}</td>
-                                <td>{{ $component->sku }}</td>
-                                <td>{{ $component->description }}</td>
-                                <td>{{ $component->category }}</td>
-                                <td>{{ $component->weight }}</td>
-                                <td>{{ $component->pivot->quantity }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Component ID</th>
+                    <th>SKU</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Weight</th>
+                    <th>Quanitity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($order->components as $component)
+                    <tr>
+                        <td>{{ $component->id }}</td>
+                        <td>{{ $component->sku }}</td>
+                        <td>{{ $component->description }}</td>
+                        <td>{{ $component->category }}</td>
+                        <td>{{ $component->weight }}</td>
+                        <td>{{ $component->pivot->quantity }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
     </body>
 </html>

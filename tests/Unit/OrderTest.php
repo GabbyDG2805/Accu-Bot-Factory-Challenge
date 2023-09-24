@@ -9,50 +9,52 @@ use App\Models\ComponentOrder;
 
 class OrderTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a new order with a customer name
+        $this->order = Order::create([
+            'customer_name' => 'Test Customer',
+        ]);
+
+        // Create two components with SKUs, weights, and categories
+        $this->component1 = Component::create([
+            'sku' => 'Test-001',
+            'weight' => 5,
+            'category' => 'Electronics'
+        ]);
+
+        $this->component2 = Component::create([
+            'sku' => 'Test-002',
+            'weight' => 3,
+            'category' => 'Fasteners'
+        ]);
+
+        // Associate components with the order and specify quantities
+        $this->componentOrder1 = ComponentOrder::create([
+            'order_id' => $this->order->id,
+            'component_id' => $this->component1->id,
+            'quantity' => 2
+        ]);
+
+        $this->componentOrder2 = ComponentOrder::create([
+            'order_id' => $this->order->id,
+            'component_id' => $this->component2->id,
+            'quantity' => 3
+        ]);
+    }
+
     /**
      * Test the calculateTotalWeight method of the Order model.
      */
     public function testCalculateTotalWeight()
     {
-        // Create a new order with a customer name
-        $order = Order::create([
-            'customer_name' => 'Test Customer',
-        ]);
-
-        // Create two components with SKUs and weights
-        $component1 = Component::create([
-            'sku' => 'Test-001',
-            'weight' => 5,
-        ]);
-
-        $component2 = Component::create([
-            'sku' => 'Test-002',
-            'weight' => 3,
-        ]);
-
-        // Associate components with the order and specify quantities
-        $componentOrder1 = ComponentOrder::create([
-            'order_id' => $order->id,
-            'component_id' => $component1->id,
-            'quantity' => 2
-        ]);
-
-        $componentOrder2 = ComponentOrder::create([
-            'order_id' => $order->id,
-            'component_id' => $component2->id,
-            'quantity' => 3
-        ]);
-
         // Calculate the total weight
-        $totalWeight = $order->calculateTotalWeight();
+        $totalWeight = $this->order->calculateTotalWeight();
 
         // Assert that the total weight is calculated correctly
         $this->assertEquals(5 * 2 + 3 * 3, $totalWeight);
-
-        // Clean up by deleting the created records
-        Order::destroy($order->id);
-        Component::destroy($component1->id);
-        Component::destroy($component2->id);
     }
 
     /**
@@ -60,45 +62,14 @@ class OrderTest extends TestCase
      */
     public function testGenerateRobotName()
     {
-        // Create a new order with a customer name
-        $order = Order::create([
-            'customer_name' => 'Test Customer',
-        ]);
-
-        // Create two components with SKUs, weights and categories
-        $component1 = Component::create([
-            'sku' => 'Test-001',
-            'weight' => 5,
-            'category' => 'Electronics'
-        ]);
-
-        $component2 = Component::create([
-            'sku' => 'Test-002',
-            'weight' => 3,
-            'category' => 'Fasteners'
-        ]);
-
-        // Associate components with the order and specify quantities
-        $componentOrder1 = ComponentOrder::create([
-            'order_id' => $order->id,
-            'component_id' => $component1->id,
-            'quantity' => 2
-        ]);
-
-        $componentOrder2 = ComponentOrder::create([
-            'order_id' => $order->id,
-            'component_id' => $component2->id,
-            'quantity' => 3
-        ]);
-
         // Calculate the most prevalent category within the order
-        $mostPrevalentCategory = $order->calculateMostPrevalentCategory($order);
+        $mostPrevalentCategory = $this->order->calculateMostPrevalentCategory($this->order);
 
         // Assert that the most prevalent category matches 'Electronics'
         $this->assertEquals('Electronics', $mostPrevalentCategory);
 
         // Generate a robot name
-        $robotName = $order->generateRobotName($order);
+        $robotName = $this->order->generateRobotName($this->order);
 
         // An array of possible prefixes for the robot name
         $possiblePrefixes = ['Electro', 'Circuit', 'Wired', 'Diode', 'Fuse'];
@@ -117,10 +88,13 @@ class OrderTest extends TestCase
 
         // Assert that a match was found in the robot name
         $this->assertTrue($matchFound);
+    }
 
+    protected function tearDown(): void
+    {
         // Clean up by deleting the created records
-        Order::destroy($order->id);
-        Component::destroy($component1->id);
-        Component::destroy($component2->id);
+        Order::destroy($this->order->id);
+        Component::destroy($this->component1->id);
+        Component::destroy($this->component2->id);
     }
 }

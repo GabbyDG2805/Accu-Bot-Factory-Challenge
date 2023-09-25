@@ -53,15 +53,15 @@ Once the application key is set successfully, run `php artisan migrate:fresh`.
 
 If not already, CD to the project directory in the Command Prompt.
 
-To import the orders, run `php artisan import:orders orders.csv`. (The csv is included within the project files)
+To import the orders, run `php artisan import:orders orders.csv` (the csv is included within the project files). This command imports the data from the csv and also from the API, and makes the necessary calculations in order to generate robot names.
 
-Then, run `php artisan serve` which should inform you that the server is running on [http://127.0.0.1:8000](http://127.0.0.1:8000) which you can now access in your browser.
+Once the order data has imported successfully, run `php artisan serve` which should inform you that the server is running on [http://127.0.0.1:8000](http://127.0.0.1:8000) which you can now access in your browser.
 
-On the webpage, you should be able to see the orders, search amongst them, navigate to view details for each one and change each robot name.
+On the webpage, you should be able to see the orders, search amongst them using either an ID number, a customer name or robot name (which can be partial e.g. surname only), navigate to view details for each one and change each robot name.
 
 ### Tests:
 
-Unit Tests were created for this project. If the server is running, stop it by pressing Ctrl + C.
+PHPUnit Tests were created for this project. If the server is running, stop it by pressing Ctrl + C.
 
 To run the tests, execute the command `php artisan test`.
 
